@@ -17,10 +17,8 @@ module.exports = {
 	initialise : function (){
 		parser.on('data', function (data){
 			byte = parseInt(data[0]);
-			console.log(byte);
 			if(startHeader == 1){
 				message[bufferIndex] = byte;
-				console.log(message);
 				if(bufferIndex == message[2] - 1){
 					packetRecieved = 1;
 					startHeader = 0;

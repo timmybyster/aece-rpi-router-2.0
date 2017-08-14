@@ -78,6 +78,7 @@ function filterAndExecuteInserts(insert, callback){
 	var pubnub = require('./pubnub');
 	var jsonDB = require('./jsonDb');
 	var tcpServer = require('./tcpServer');
+	var mysql = require('./mysql');
 	
 	console.log("\x1b[33m", "1. PUBLISHING PUBNUB INSERT......");
 	pubnub.publish(insert, 'updateChannel', function (err, result){
@@ -96,12 +97,20 @@ function filterAndExecuteInserts(insert, callback){
 	});
 	
 	console.log("\x1b[35m", "2. WRITING INSERT TO TCP CLIENT......");
-	tcpServer.write(update, function(err, result){
+	tcpServer.write(insert, function(err, result){
 		if(err)
 			callback(err, null);
 		else
 			callback(null, result);
 	});
+	
+	console.log("\x1b[35m", "3. INSERTING MYSQL......");
+		mysql.insertNodeData(insert, function(err, result){
+			if(err)
+				callback(err, null);
+			else
+				callback(null, result);
+		});
 }
 
 function updateJsonObject(update, callback){

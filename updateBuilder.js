@@ -10,6 +10,7 @@ module.exports = {
 		jsonDb.getRelevantTreeNode(node.type_id, node.serial, function(err, treeNode){
 			if(err){
 				updates = insertNode(node);
+				console.log(err);
 				callback(null, updates);
 			}
 			else{
@@ -24,7 +25,11 @@ function updateTreeNode(treeNode, node){
 	var updateObject = createUpdateObject();
 	
 	if(node.children.length > 0){
-		var treeChildren = treeNode[node.children[0].type_id];
+		var treeChildren;
+		if(treeNode[node.children[0].type_id] != undefined)
+			treeChildren = treeNode[node.children[0].type_id];
+		else
+			treeChildren = {};
 		
 		var childComms = [];
 		
@@ -35,7 +40,7 @@ function updateTreeNode(treeNode, node){
 				}
 				else{
 					treeChildren[child.serial] = child;
-					updates.push(child);
+					updateObject.inserts.push(child);
 				}
 				childComms.push(child.serial);
 			}

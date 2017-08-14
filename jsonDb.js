@@ -27,14 +27,13 @@ module.exports = {
 		
 		if(type_id == 'ibc')
 			path = '/ibc';
-		
+		console.log(path);
 		try{
 			var treeNode = db.getData(path);
 			tempDB.push('/', treeNode);
 			callback(null, treeNode);
 		}
 		catch(err){
-			console.log(err);
 			callback('No Node Found', null);
 		}
 	},

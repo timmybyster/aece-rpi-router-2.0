@@ -37,7 +37,7 @@ function createAb1Object(serial, data , window){
 	
 function createAb1DataObject(data, detsLength){
 	var ab1DataObject = {
-			dets_length : detsLength,
+			window_id : detsLength,
 			communication_status : 1,
 			key_switch_status: (data & 0b1),
 			cable_fault: (data & 0b10) >> 1,

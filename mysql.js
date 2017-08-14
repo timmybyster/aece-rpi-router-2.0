@@ -64,15 +64,11 @@ module.exports = {
 		this.getConnection(pool, function (err, connection) {
 			if (err)
 				return callback(err);
-			var query = buildInsertQuery(data);
-			connection.query(query, function (err, result) {
-				if (err) {
-					connection.release();
-					return callback(err);
-				} else {
-					connection.release();
+			buildInsertQuery(data, connection, function (err, result){
+				if(err)
+					callback(err, null);
+				else
 					callback(null, result);
-				}
 			});
 		});
 	},
@@ -99,36 +95,106 @@ module.exports = {
 			if(err)
 				callback(err, null);
 			else{
-				connection.query("SELECT id FROM nodes WHERE serial = ? AND type_id = ?", [serial, type_id], function (err, result){
-					if(err)
-						callback(err, null);
-					else{
-						callback(null, result[0]['id']);
-					}
-				});
+				if(serial){
+					connection.query("SELECT id FROM nodes WHERE serial = ? AND type_id = ?", [serial, type_id], function (err, result){
+						if(err)
+							callback(err, null);
+						else{
+							if(result.length == 0)
+								callback(err, null);
+							else
+								callback(null, result[0]['id']);
+						}
+					});
+				}
+				else{
+					connection.query("SELECT id FROM nodes WHERE type_id = ?", [type_id], function (err, result){
+						if(err)
+							callback(err, null);
+						else{
+							if(result.length == 0)
+								callback(err, null);
+							else
+								callback(null, result[0]['id']);
+						}
+					});
+				}
 			}
 		});
 	}
 	
 }
 
-function buildInsertQuery(data){	
+function buildInsertQuery(data, connection, callback){	
 	var query = "INSERT INTO nodes ";
-	var properties = "(serial,type_id,";
-	var values = "VALUES(" + data.serial + ","  + data.type_id + ",";
+	var properties = "(serial,type_id,parent_id,";
+	var intType_id;
+	var parent_type, parentId;
 	
-	for (var property in data.data){
-		if(data.data[property] != null){
-			properties += property + ",";
-			values += data.data[property] + ",";
-		}
+	switch(data.type_id){
+		case 'ibc' :
+			intType_id = 0;
+			parent_type = 0;
+			break;
+			
+		case 'isc' :
+			intType_id = 1;
+			parent_type = 0;
+			break;
+			
+		case 'ib651' :
+			intType_id = 2;
+			parent_type = 1;
+			break;
+			
+		case 'ab1' :
+			intType_id = 3;
+			parent_type = 0;
+			break;
+			
+		case 'edd' :
+			intType_id = 4;
+			parent_type = 3;
+			break;
+			
 	}
-	properties = properties.substr(0, properties.length - 1);
-	values = values.substr(0, values.length - 1);
-	properties += ") ";
-	values += ") ";
-	query += properties + values;
-	return query;
+	
+	var mysql = require('./mysql');
+	
+	mysql.getId(data.parent_serial, parent_type, function(err, result){
+		if(err)
+			parentId = 0;
+		else{
+			parentId = result;
+			console.log("parentId: " + parentId);
+			if(parentId == undefined)
+				parentId = 0;
+			
+			var values = "VALUES(" + data.serial + ","  + intType_id + ","  + parentId + ",";
+			
+			for (var property in data.data){
+				if(data.data[property] != null){
+					properties += property + ",";
+					values += data.data[property] + ",";
+				}
+			}
+			properties = properties.substr(0, properties.length - 1);
+			values = values.substr(0, values.length - 1);
+			properties += ") ";
+			values += ") ";
+			query += properties + values;
+			console.log(query);
+			connection.query(query, function (err, result) {
+				if (err) {
+					connection.release();
+					return callback(err);
+				} else {
+					connection.release();
+					callback(null, result);
+				}
+			});
+		}
+	});
 }
 
 function buildUpdateQuery(data){	
