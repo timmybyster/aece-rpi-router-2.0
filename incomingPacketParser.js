@@ -4,6 +4,8 @@ created by : Tim Buckley
 
 module.exports = {
 	parseIncomingPacket : function (message, callback){
+		console.log("RAW MESSAGE: ");
+		console.log(message);
 		var packet = [];
 		var tempMessage = [];
 		for (j = 0; j < parseInt(message[2]); j ++){
