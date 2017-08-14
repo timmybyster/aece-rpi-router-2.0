@@ -11,7 +11,7 @@ module.exports = {
 					PUBLISH_KEY : 'pub-c-de71bd7c-fda3-427f-86d4-93c89f7ae705'
 				},
 				
-	SERIAL :	{	PORT : 'COM12',
+	SERIAL :	{	PORT : '/dev/tty0',
 					VIRTUAL : 'COM12'
 				}
 				
