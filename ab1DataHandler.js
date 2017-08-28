@@ -56,7 +56,7 @@ function createAb1DataObject(data, detsLength){
 
  function createEddObject(data, window, delay, parentSerial){
 	var eddObject = {													//define the EDD object
-		serial : null,													//there is no serial specified in this packet so set it as null
+		serial : window,												//there is no serial specified in this packet so set it as null
 		type_id : "edd",												//define its type ID
 		parent_serial : parentSerial,									//define its parent
 		data : createEddDataObject(data, window, delay) 				//create a data object

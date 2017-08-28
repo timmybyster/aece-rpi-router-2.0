@@ -6,14 +6,11 @@ module.exports = {
 	createNodeFromPacket : function(packet){
 		var ab1 = createAb1Object(packet.source);									//Create an AB1 object
 		var eddLength = packet.data.length/5;										//determine the number of EDDs based on the length of the data
-		var eddSerialArray, eddSerial, eddWindow;									//define temporary variables for the EDD data
+		var eddUid, eddWindow;														//define temporary variables for the EDD data
 		for (var i = 0; i < eddLength; i++){										//for each EDD
-			eddSerialArray = packet.data.splice(0,5);								//get the next EDD ip and window data
-			eddSerial = (eddSerialArray[0] << 24) & 0xFF000000;						//get the Bytes of the IP
-			eddSerial |= (eddSerialArray[1] << 16) & 0xFF0000;
-			eddSerial |= (eddSerialArray[2] << 8) & 0xFF00;
-			eddSerial |= (eddSerialArray[3]) & 0xFF;
-			ab1.children.push(createEddObject(eddSerial, eddSerialArray[4], packet.source));//create the edd object and add it as a child of the AB1
+			eddUid = packet.data.splice(0,4);										//get the next EDD ip and window data
+			eddWindow = packet.data.splice(0,1);
+			ab1.children.push(createEddObject(eddUid, eddWindow[0], packet.source));//create the edd object and add it as a child of the AB1
 		}
 		return ab1;																	//return the AB1 object
 	}
@@ -29,11 +26,11 @@ function createAb1Object(serial){
 	return ab1Object; 																//return the AB1 object
 }
 
-function createEddObject(serial, window, parentSerial){
+function createEddObject(uid, window, parentSerial){
 	var eddObject = {																//create an EDD object
-		serial : serial,															//define its serial Number
+		serial : window,															//define its serial Number
 		type_id : "edd",															//define its type ID
-		data : {communication_status : 1, window_id : window},						//set its communication_status to true and its window 
+		data : {communication_status : 1, uid : uid},						        //set its communication_status to true and its window 
 		parent_serial : parentSerial												//define its parent serial
 	}
 	return eddObject;																//return the EDD object

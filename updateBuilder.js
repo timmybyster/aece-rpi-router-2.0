@@ -30,43 +30,15 @@ function updateTreeNode(treeNode, node){
 		else																//otherwise
 			treeChildren = {};												//set it as an empty object
 		
-		var childComms = [];												//initalise a temporary array
-		
 		node.children.forEach(child => {									//for each child node
-			if(child.serial != null){										//if the node serial is null
-				if(treeChildren[child.serial] != null){						//if the node exists
-					updateObject.updates.push(createNodeUpdateObject(treeChildren[child.serial], child));//create an update
-				}
-				else{														//otherwise
-					treeChildren[child.serial] = child;						//add the child to the treeChildren
-					updateObject.inserts.push(child);						//add it as an insert
-				}
-				childComms.push(child.serial);								//add the node to the communication status array
+			if(treeChildren[child.serial] != null){							//if the node exists
+				updateObject.updates.push(createNodeUpdateObject(treeChildren[child.serial], child));//create an update
 			}
-			else{															//serial is a null value
-				for(var serial in treeChildren){							//for every serial in treeChildren
-					if(child.data.window_id == treeChildren[serial].data.window_id){//if the window ids match
-						updateObject.updates.push(createNodeUpdateObject(treeChildren[serial], child));//update that existing node
-						childComms.push(parseInt(serial));					//add this serial to the Communication status array
-					}
-				}
+			else{															//otherwise
+				treeChildren[child.serial] = child;							//add the child to the treeChildren
+				updateObject.inserts.push(child);							//add it as an insert
 			}
-				
 		});
-		if(node.children[0].type_id == 'ib651'){							//if the children are ib651s
-			for (var serial in treeChildren){								//for each serial in the exsiting children
-				if(treeChildren[serial].data.communication_status == 1){	//if the communication status is currently TRUE
-					var exists = 0;											//clear the exists flag
-					childComms.forEach(childComm => {						//for each unit that was in this packet
-						if(treeChildren[serial].serial == childComm)		//if it already exists
-							exists = 1;										//set the exists Flag
-					});
-					if(!exists){											//if the exists flag was never set
-						updateObject.updates.push(commsLoss(treeChildren[serial]));//add this node as an update to set its communication status to FALSE
-					}
-				}
-			}
-		}
 	}
 	updateObject.updates.push(createNodeUpdateObject(treeNode, node));		//add the parent node to the update tree
 	updateObject.jsonUpdates.push(treeNode);								//add the JSON update

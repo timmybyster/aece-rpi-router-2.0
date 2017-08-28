@@ -36,10 +36,10 @@ function createIscObject(serial){
 
 function createIb651Object(serial, window, parentSerial){
 	var ib651Object = {
-		serial : serial,
+		serial : window,
 		type_id : "ib651",
 		parent_serial : parentSerial,
-		data : {window_id : window, communication_status : 1}
+		data : {serial : serial, window_id : window, communication_status : 1}
 	}
 	return ib651Object;
 }

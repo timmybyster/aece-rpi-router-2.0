@@ -51,7 +51,7 @@ function createIscDataObject(data){
 
 function createIb651Object(data, window, parentSerial){
 	var ib651Object = {
-		serial : null,
+		serial : window,
 		type_id : "ib651",
 		parent_serial : parentSerial,
 		data : createIb651DataObject(data, window)
