@@ -4,7 +4,7 @@ created by : Tim Buckley
 
 var jsonDB = require('node-json-db');
 var env = require('./environmentVariables')
-db = new jsonDB(env.JOSN_DB.FILE, true, false);
+db = new jsonDB(env.JSON_DB.FILE, true, false);
 tempDB = new jsonDB('./currentNode',true, false);
 
 module.exports = {
