@@ -4,8 +4,8 @@ created by : Tim Buckley
 
 module.exports = {
 	createNodeFromPacket : function(packet){
-		var ibc = createIbcObject(packet.source);
-		var iscLength = packet.data.length/2;
+		var ibc = createIbcObject(packet.source);									
+		var iscLength = packet.data.length/2;										
 		var iscSerialArray, iscSerial;
 		for (var i = 0; i < iscLength; i++){
 			iscSerialArray = packet.data.splice(0,2);

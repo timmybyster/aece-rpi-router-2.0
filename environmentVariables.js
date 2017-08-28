@@ -12,7 +12,14 @@ module.exports = {
 				},
 				
 	SERIAL :	{	PORT : 'COM12',
-					VIRTUAL : 'COM12'
+					BAUD_RATE : 9600
+				},
+				
+	JSON_DB :	{	FILE : './treeTest'
+				},
+				
+	TCP : 		{	PORT : 2000,
+					BIND_ADDRESS: 172.24.1.1
 				}
 				
 }

@@ -4,21 +4,21 @@ created by : Tim Buckley
 
 module.exports = {
 	createNodeFromPacket : function(packet){
-		var ibcDataArray = packet.data.splice(0,2);
-		var ibcData = ibcDataArray[1];
-		var ibc = createIbcObject(packet.source, ibcData);
+		var ibcDataArray = packet.data.splice(0,2);						//Sepearte the IBC Data 
+		var ibcData = ibcDataArray[1];									//Get the IBC data
+		var ibc = createIbcObject(packet.source, ibcData);				//create the IBC object
 		return ibc;
 	}
 }
 
 function createIbcObject(serial, data){
-	var ibcObject = {
-		serial : serial,
-		type_id : "ibc",
-		data : createIbcDataObject(data),
-		children : []
+	var ibcObject = {													//create an IBC object
+		serial : serial,												//define its serial number
+		type_id : "ibc",												//define its type ID
+		data : createIbcDataObject(data),								//create its data Object
+		children : []													//initalise its children
 	}
-	return ibcObject; 
+	return ibcObject; 													//return the IBC object
 }
 
 function createIbcDataObject(data){

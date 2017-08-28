@@ -4,48 +4,49 @@ created by : Tim Buckley
 
 module.exports = {
 	parseIncomingPacket : function (message, callback){
-		console.log("RAW MESSAGE: ");
+		console.log("RAW MESSAGE: ");											//Log the Raw message on the console
 		console.log(message);
-		var packet = [];
-		var tempMessage = [];
-		for (j = 0; j < parseInt(message[2]); j ++){
-			packet[j] = parseInt(message[j]);
-			tempMessage[j] = parseInt(message[j]);
+		var packet = [];														//initalise an array to store the packet
+		var tempMessage = [];													//initalise a temporary array to compare CRCs
+		//this is redundant and can be simplified
+		for (j = 0; j < parseInt(message[2]); j ++){							//for the length of the message
+			packet[j] = parseInt(message[j]);									//copy the message to the packet
+			tempMessage[j] = parseInt(message[j]);								//copy the message to the temporary array
 		}
-		var messageWithoutCrc = tempMessage.splice(0, tempMessage.length - 2);
-		var crc = require('./crc');
-		var crcCalc = crc.calculate(messageWithoutCrc);
-		var parsedPacket = {
-			startByte : packet.splice(0,2),
-			packetLength : packet.splice(0,1),
-			command : packet.splice(0,1),
-			source : packet.splice(0,2),
-			data : null,
-			crc : null
+		var messageWithoutCrc = tempMessage.splice(0, tempMessage.length - 2);	//seperate the crc from the message
+		var crc = require('./crc');												//get the Crc calculator
+		var crcCalc = crc.calculate(messageWithoutCrc);							//Calculate the CRC based on the received message
+		var parsedPacket = {													//create a parsed Packet object
+			startByte : packet.splice(0,2),										//set the startByte
+			packetLength : packet.splice(0,1),									//get the packet length
+			command : packet.splice(0,1),										//get the command
+			source : packet.splice(0,2),										//get the source
+			data : null,														//initalise the data as null for now
+			crc : null															//initalise the CRC as null for now
 		}
-		parsedPacket.data = packet.splice(0, parsedPacket.packetLength - 8);
-		parsedPacket.crc = packet.splice(0, 2);
-		var cleanPacket = cleanIncomingPacket(parsedPacket);
-		if(crcCalc != cleanPacket.crc)
-			callback("incorrect CRC, recieved: " + cleanPacket.crc.toString(16) + " expected: " + crcCalc.toString(16), null);
-		else
-			callback(null, cleanPacket);
+		parsedPacket.data = packet.splice(0, parsedPacket.packetLength - 8);	//get the data based on the length of the packet
+		parsedPacket.crc = packet.splice(0, 2);									//get the crc from the remaining bytes
+		var cleanPacket = cleanIncomingPacket(parsedPacket);					//clean the packet
+		if(crcCalc != cleanPacket.crc)											//if the crc calculated is not equal to the crc received
+			callback("incorrect CRC, recieved: " + cleanPacket.crc.toString(16) + " expected: " + crcCalc.toString(16), null);//pass the error message to the callback
+		else																	//otherwise
+			callback(null, cleanPacket);										//pass the clean Packet to the callback
 	}
 }
 
 function cleanIncomingPacket(parsedPacket){
-	var cleanPacket = {
-		packetLength : parsedPacket.packetLength[0],
-		command : parsedPacket.command[0],
-		data : parsedPacket.data,
-		source : null,
-		crc : null
+	var cleanPacket = {															//define a clean packet object
+		packetLength : parsedPacket.packetLength[0],							//convert the packet length from an array
+		command : parsedPacket.command[0],										//convert the command from an array
+		data : parsedPacket.data,												//keep the data as an array
+		source : null,															//initalise the source as null for now
+		crc : null																//initalise the crc as null for now
 	}
-	cleanPacket.source = (parsedPacket.source[0] << 8) & 0xFF00;
-	cleanPacket.source |= parsedPacket.source[1];
-	cleanPacket.crc = (parsedPacket.crc[0] << 8) & 0xFF00;
-	cleanPacket.crc |= parsedPacket.crc[1];
+	cleanPacket.source = (parsedPacket.source[0] << 8) & 0xFF00;				//get the source MSB
+	cleanPacket.source |= parsedPacket.source[1];								//get the source LSB
+	cleanPacket.crc = (parsedPacket.crc[0] << 8) & 0xFF00;						//get the crc MSB
+	cleanPacket.crc |= parsedPacket.crc[1];										//get the crc LSB
 	
-	return cleanPacket;
+	return cleanPacket;															//return the cleaned packet
 }
 
