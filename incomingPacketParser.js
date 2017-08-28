@@ -3,15 +3,12 @@ created by : Tim Buckley
 2017/07/25 */
 
 module.exports = {
-	parseIncomingPacket : function (message, callback){
+	parseIncomingPacket : function (packet, callback){
 		console.log("RAW MESSAGE: ");											//Log the Raw message on the console
-		console.log(message);
-		var packet = [];														//initalise an array to store the packet
+		console.log(packet);
 		var tempMessage = [];													//initalise a temporary array to compare CRCs
-		//this is redundant and can be simplified
-		for (j = 0; j < parseInt(message[2]); j ++){							//for the length of the message
-			packet[j] = parseInt(message[j]);									//copy the message to the packet
-			tempMessage[j] = parseInt(message[j]);								//copy the message to the temporary array
+		for (j = 0; j < packet.length; j++){									//for the length of the message
+			tempMessage[j] = packet[j];											//copy the message to the temporary array
 		}
 		var messageWithoutCrc = tempMessage.splice(0, tempMessage.length - 2);	//seperate the crc from the message
 		var crc = require('./crc');												//get the Crc calculator
