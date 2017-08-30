@@ -3,3 +3,7 @@ node_modules/
 npm-debug.log.2407232857
 treeTest.json
 currentNode.json
+aece-rpi-router-2.0.njsproj
+.vs/
+bin/Microsoft.NodejsTools.WebRole.dll
+obj/

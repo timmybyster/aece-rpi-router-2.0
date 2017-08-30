@@ -7,12 +7,21 @@ var serial = require('./serialPort');
 var tcpServer = require('./tcpServer');
 var iscComms = require('./iscCommsHandler');
 var mysql = require('./mysql');
+var env = require('./environmentVariables');
 
-pubnub.initialise();
 serial.initialise();
-//tcpServer.initialise();
-mysql.initialise();
-//iscComms.initialise();
+
+if(env.PUBNUB.ACTIVE == 1)
+	pubnub.initialise();
+
+if(env.TCP.ACTIVE == 1)
+	tcpServer.initialise();
+
+if(env.MYSQL.ACTIVE == 1)
+	mysql.initialise();
+
+if(env.ISC_COMMS.ACTIVE == 1)
+	iscComms.initialise();
 
 
 	

@@ -7,12 +7,13 @@ var pool;
 module.exports = {
 	
 	initialise : function (){
+		var env = require('./environmentVariables');
 		var mysql = require('mysql');
 		pool = mysql.createPool({
-			host: "localhost",
-			user: "root",
-			password: "root",
-			database: "ibspiui"
+			host: env.MYSQL.HOST,
+			user: env.MYSQL.USER,
+			password: env.MYSQL.PWD,
+			database: env.MYSQL.DB
 		});
 	},
 	
