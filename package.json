@@ -1,0 +1,23 @@
+{
+  "name": "aece-rpi-router-2.0",
+  "version": "1.0.0",
+  "description": "A data processor for detecting changes on the IBS and CBS systems",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timmybyster/aece-rpi-router-2.0.git"
+  },
+  "keywords": [],
+  "author": "Tim Buckley",
+  "bugs": {
+    "url": "https://github.com/timmybyster/aece-rpi-router-2.0/issues"
+  },
+  "homepage": "https://github.com/timmybyster/aece-rpi-router-2.0",
+  "dependencies" : {
+	"node-json-db" : "0.7.3",
+	"mysql" : "2.14.1",
+	"serialport" : "5.0.0",
+	"pubnub" : "4.15.1",
+	"net" : "1.0.2"
+  }
+}
